@@ -1,6 +1,6 @@
 // src/pages/Dashboard.jsx
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import API from "../api"; // ✅ Use centralized API instance
 import {
   PieChart,
   Pie,
@@ -32,11 +32,7 @@ const Dashboard = () => {
 
   const fetchTransactions = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/transactions", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`
-        }
-      });
+      const res = await API.get("/api/transactions");
       setTransactions(res.data);
     } catch (err) {
       console.error("Error fetching transactions:", err);
@@ -50,11 +46,7 @@ const Dashboard = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/api/transactions", formData, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`
-        }
-      });
+      await API.post("/api/transactions", formData);
       setFormData({
         title: "",
         amount: "",

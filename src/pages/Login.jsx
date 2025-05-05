@@ -1,6 +1,6 @@
 // src/pages/Login.jsx
 import { useState } from "react";
-import axios from "axios";
+import API from "../api";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
@@ -9,9 +9,14 @@ function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const res = await axios.post("http://localhost:5000/auth/login", form);
-    localStorage.setItem("token", res.data.token);
-    navigate("/");
+    try {
+      const res = await API.post("/auth/login", form);
+      localStorage.setItem("token", res.data.token);
+      navigate("/");
+    } catch (err) {
+      console.error(err);
+      alert("Login failed");
+    }
   };
 
   return (

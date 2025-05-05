@@ -1,6 +1,6 @@
 import { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import API from "../api"; // ✅ Import centralized Axios instance
 
 function Register() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -9,11 +9,11 @@ function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/auth/register", form);
+      await API.post("/auth/register", form);
       alert("Registration successful!");
       navigate("/login");
     } catch (err) {
-      alert("Error: " + err.response.data.error || "Registration failed");
+      alert("Error: " + (err.response?.data?.error || "Registration failed"));
     }
   };
 
