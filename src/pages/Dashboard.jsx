@@ -1,6 +1,4 @@
-// src/pages/Dashboard.jsx
 import React, { useState, useEffect } from "react";
-import API from "../api"; // ✅ Use centralized API instance
 import {
   PieChart,
   Pie,
@@ -32,8 +30,13 @@ const Dashboard = () => {
 
   const fetchTransactions = async () => {
     try {
-      const res = await API.get("/api/transactions");
-      setTransactions(res.data);
+      const res = await fetch("http://localhost:5000/api/transactions", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      });
+      const data = await res.json();
+      setTransactions(data);
     } catch (err) {
       console.error("Error fetching transactions:", err);
     }
@@ -46,7 +49,14 @@ const Dashboard = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await API.post("/api/transactions", formData);
+      await fetch("http://localhost:5000/api/transactions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify(formData)
+      });
       setFormData({
         title: "",
         amount: "",
@@ -59,7 +69,6 @@ const Dashboard = () => {
     }
   };
 
-  // Chart Data
   const income = transactions
     .filter((t) => t.type === "income")
     .reduce((sum, t) => sum + Number(t.amount), 0);
@@ -215,3 +224,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+

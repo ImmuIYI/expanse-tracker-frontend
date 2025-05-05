@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import API from "../api"; // ✅ Import centralized Axios instance
 
 function Register() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -9,11 +8,23 @@ function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await API.post("/auth/register", form);
+      const res = await fetch("http://localhost:5000/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(form)
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.error || "Registration failed");
+      }
+
       alert("Registration successful!");
       navigate("/login");
     } catch (err) {
-      alert("Error: " + (err.response?.data?.error || "Registration failed"));
+      alert("Error: " + err.message);
     }
   };
 
@@ -48,3 +59,4 @@ function Register() {
 }
 
 export default Register;
+

@@ -1,6 +1,4 @@
-// src/pages/Login.jsx
 import { useState } from "react";
-import API from "../api";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
@@ -10,12 +8,25 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await API.post("/auth/login", form);
-      localStorage.setItem("token", res.data.token);
-      navigate("/");
+      const res = await fetch("http://localhost:5000/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(form)
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Login failed");
+      }
+
+      localStorage.setItem("token", data.token);
+      alert("Login successful!");
+      navigate("/dashboard");
     } catch (err) {
-      console.error(err);
-      alert("Login failed");
+      alert("Error: " + err.message);
     }
   };
 
